@@ -2,6 +2,7 @@ import csv
 import collections
 import random
 import pprint
+from datetime import datetime, timedelta
 
 comb_dict = {}
 with open('sample-dataset1.csv') as csvfile:
@@ -57,7 +58,7 @@ with open('sample-dataset1.csv') as fp:
 				writer.writerow(new_row)
 			k += 1
 #Random Instance type allocation
-
+new_data_set = []
 with open('sample.csv') as fp:
 	k = 0
 	reader = csv.reader(fp)
@@ -68,22 +69,43 @@ with open('sample.csv') as fp:
 		s_count = 0
 		choices_list = ['On-demand'] * 60 + ['Reserved'] * 20 + ['Spot'] * 10
 		writer = csv.writer(fp2)
-		writer.writerow(["Submit Time","Wait Time","Run Time","No. Allocated Processors","Requested Memory","Flavor","Instance Type"])
+		writer.writerow(["Submit Time","Wait Time","Run Time","No. Allocated Processors","Requested Memory","Flavor","Instance Type","Priority"])
 		for row in reader:
 			if k > 0:
 				new_row = row
+				priority = ""
 				random_instance_type = random.choice(choices_list)
 				if random_instance_type == 'On-demand':
 					od_count += 1
+					priority = "high"
 				elif random_instance_type == 'Reserved':
 					r_count += 1
+					priority = "low"
 				else:
-					s_count += 1		
+					s_count += 1
+					priority = "low"		
 				new_row.append(random_instance_type)
+				new_row.append(priority)
+				new_data_set.append(new_row)
 				writer.writerow(new_row)
 			k += 1
 
 		print 'On-demand instances: ' + str(od_count)
 		print 'Reserved instances: ' + str(r_count)
 		print 'Spot instances: ' + str(s_count)
-		
+
+with open('final1.csv','wb') as ff:
+	writer = csv.writer(ff)
+	writer.writerow(["Submit Time","Wait Time","Run Time","No. Allocated Processors","Requested Memory","Flavor","Instance Type","Priority"])
+	init = "1/1/70 12:00 AM"
+	final = "12/22/71 10:27 PM"
+	start = datetime.strptime(init,"%m/%d/%y %H:%M %p")
+	end = datetime.strptime(final, "%m/%d/%y %H:%M %p")
+	step = datetime.timedelta(minutes=1)
+	while start <= end:
+		date = start.strftime("%m/%d/%y %H:%M %p")
+		for i in new_data_set:
+			if i[0] == date:
+				print i
+				break
+		start += step
