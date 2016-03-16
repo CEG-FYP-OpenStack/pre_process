@@ -50,7 +50,7 @@ with open('sample-dataset1.csv') as fp:
 		writer = csv.writer(fp2)		
 		writer.writerow(["Submit Time","Wait Time","Run Time","No. Allocated Processors","Requested Memory","Flavor"])
 		for row in reader:
-			if k > 0 and k <= 10000:
+			if k > 0 and k <= 1000:
 				new_row = row
 				core = row[3]
 				ram = row[4]
